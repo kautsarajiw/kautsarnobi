@@ -36,8 +36,6 @@ $ npx react-native run-android
 
 ### Extra Effort
 
-Dillinger is currently extended with the following plugins. Instructions on how to use them in your own application are linked below.
-
 | Effort | Description |
 | ------ | ------ |
 | Pull to Refresh | You can refresh the page, just pull and hold |
