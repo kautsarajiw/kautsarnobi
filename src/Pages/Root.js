@@ -11,7 +11,7 @@ class Root extends Component {
       super(props);
       this._cekState();
     }
-  
+    
     //cek state status user sedang login atau tidak
     _cekState() {
       const {appIsLogin} = this.props;

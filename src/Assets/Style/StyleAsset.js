@@ -6,22 +6,6 @@ import {
 import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
-/*
-  NAVBAR & HEADER : #262626
-  LINE : #575758
-  BACKGROUND : #363639
-  FONT : #F7FFFF
-  MERAH : #FF453A
-  HIJAU : #15BFAE
-  ICON NON ACTIVE : #8E8E93
-*/
-
-//cheatsheet kode nama2 style tinggal copy lalu CTRL + F
-//style Login Screen 01 = ###LS01
-//style Footer = ###FTR
-//style Dashboard Screen 01 = ###DS01
-
-
 
 const { height, width } = Dimensions.get('window');
 

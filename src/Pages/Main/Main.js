@@ -4,7 +4,7 @@ import {
   View,
   Image,
   TouchableOpacity,
-  StatusBar
+  StatusBar,
 } from "react-native";
 import { Container, Header, Content, Footer, FooterTab, Button, Icon, Text, Toast } from 'native-base';
 import {connect} from 'react-redux';
@@ -35,6 +35,7 @@ class MainScreens extends Component {
     this.setState({
       selectedTab: "dashboard"
     });
+
 
     axios.post(`${url.API}/dashboard`, {
       token:this.props.token      

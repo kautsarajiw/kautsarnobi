@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   },
   textButtonDeposit:{
     color:'#FFFFFF',
-    fontSize:hp('2.5%'),
+    fontSize:hp('2%'),
     fontWeight:'bold'
   },
   textOR:{
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   textButtonLogout:{
     color:'#FFFFFF',
-    fontSize:hp('2.5%'),
+    fontSize:hp('2%'),
     fontWeight:'bold'
   },
 });

@@ -3,6 +3,7 @@ import {Platform, StyleSheet, Text, View, Image, FlatList} from 'react-native';
 import {connect} from 'react-redux';
 import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 import { List, ListItem, Left, Right } from 'native-base';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 class DataList extends Component {
   render() {
@@ -22,10 +23,10 @@ class DataList extends Component {
               <ListItem style={{borderBottomColor:'#9D9FA0'}}>
                 <Left>
                   <Image style={styles.imageList} resizeMode={'contain'} source={{uri:item.image}} />
-                  <Text style={{color:'#fff', fontWeight:'bold'}}>{item.ticker}</Text>
+                  <Text style={{color:'#fff', fontWeight:'bold', fontSize:hp('1.2%')}}>{item.ticker}</Text>
                 </Left>
                 <Right>
-                  <Text style={{color:'#fff'}}>{item.amount.slice(0, 10)}</Text>
+                  <Text style={{color:'#fff', fontSize:hp('1.2%')}}>{item.amount.slice(0, 10)}</Text>
                 </Right>
               </ListItem>
             </List>
