@@ -29,6 +29,7 @@ const MainStackNavigation = createStackNavigator(
       screen: Main,
       navigationOptions: {
         headerShown: false,
+        animationEnabled:false,
       },
     }, 
   },

@@ -6,19 +6,19 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Image,
-  Linking
+  ScrollView,
 } from 'react-native';
 import {Container, Content, Form, Input, Item, Label, Button, Toast, Icon} from 'native-base';
 import {connect} from 'react-redux';
-import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
+import { verticalScale, moderateScale } from 'react-native-size-matters';
 import axios from 'axios';
+import LinearGradient from 'react-native-linear-gradient';
 
 //import BASE URL
 import url from '../../services/api_services';
 
 //import styles 
-import stylesLightMode from '../../Assets/Style/LightMode';
-import stylesDarkMode from '../../Assets/Style/DarkMode';
+import stylesAsset from '../../Assets/Style/StyleAsset';
 
 class Login extends Component {
   constructor(props) {
@@ -29,6 +29,10 @@ class Login extends Component {
       password:'',
       icon: "eye-off",
       showPassword: true,
+
+      //status email
+      errorEmail:false,
+      errorPassword:false,
 
       //loading state
       loadingLogin:false
@@ -42,24 +46,25 @@ class Login extends Component {
 
   validationLogin() {
     const { email, password } = this.state;
-    if (email === '') {
-      Toast.show({
-        text: "Invalid E-mail Adress",
-        buttonText: "OK",
-        duration: 5000
-      });
+    if (email === '' && password === ''){
+      this.setState({
+        errorEmail:true,
+        errorPassword:true,
+      })
+    } else if (email === '') {
+      this.setState({
+        errorEmail:true,
+        errorPassword:false,
+      })
     } else if(!this.validateEmail(email)){
-      Toast.show({
-        text: "Silakan masukan email dengan benar",
-        buttonText: "OK",
-        duration: 5000
-      });
+      this.setState({
+        errorEmail:true
+      })
     } else if (password === '') {
-      Toast.show({
-        text: "Silakan masukan password anda",
-        buttonText: "OK",
-        duration: 5000
-      });
+      this.setState({
+        errorPassword:true,
+        errorEmail:false
+      })
     } else {
       this.renderLogin();
     }
@@ -67,26 +72,28 @@ class Login extends Component {
 
   async renderLogin(){
     const { email, password } = this.state;
-
     this.setState({
       loadingLogin:true
     })
     axios.post(`${url.API}/login`,{
       email: email,
       password: password,
-      is_mobile:true
     }).then((res) =>{
       this.setState({
-        loadingLogin:false
+        loadingLogin:false,
+        errorEmail:false,
+        errorPassword:false,
       })
       this.afterCallbackApi(res)
     }).catch((error) =>{
       this.setState({
         loadingLogin:false,
         password: '',
+        errorEmail:false,
+        errorPassword:false,
       }, () => {
         Toast.show({
-          text: error.data.message,
+          text: 'Incorrect email / password',
           buttonText: "OK",
           duration: 5000
         })
@@ -114,51 +121,56 @@ class Login extends Component {
   }
 
   render() {
-    const imageDark = require('../../Assets/Images/logo_langgan.png');
-    const imageLight = require('../../Assets/Images/logo_langgan_dark.png');
+    const logoImage = require('../../Assets/Images/logo_nobi.png');
 
-    const {darkModeProps} = this.props;
-    const {password, loadingLogin} = this.state;
+    const {password, loadingLogin, showPassword, errorEmail, errorPassword, icon} = this.state;
     return(
-      <Container style={darkModeProps ? stylesDarkMode.containerLoginScreen : stylesLightMode.containerLoginScreen}>
-        <View style={darkModeProps ? stylesDarkMode.wrapperTextSDLoginScreen : stylesLightMode.wrapperTextSDLoginScreen}> 
-          <Text style={darkModeProps ? stylesDarkMode.textSDLoginScreen : stylesLightMode.textSDLoginScreen}>Selamat Datang di</Text>
-        </View>
+      <Container style={stylesAsset.containerLoginScreen}>
+        <LinearGradient start={{x: 0, y: 0.55}} end={{x: 0, y: -0.3}} colors={['#000000', '#152A53']} style={styles.linearGradient}>
+          <ScrollView>
+            <View style={ stylesAsset.wrapperLogoLogin}>
+              <Image resizeMode={'contain'} style={styles.logohHeader} source={logoImage} />
+            </View>
 
-        {
-          darkModeProps
-            ?
-              <Image resizeMode={'contain'} style={styles.logohHeader} source={imageDark} />
-            :
-              <Image resizeMode={'contain'}  style={styles.logohHeader} source={imageLight} />
-        }
-
-        <View style={darkModeProps ? stylesDarkMode.wrapperTextKelolaLoginScreen : stylesLightMode.wrapperTextKelolaLoginScreen}> 
-          <Text style={darkModeProps ? stylesDarkMode.textKelolaMasukLoginScreen : stylesLightMode.textKelolaMasukLoginScreen}>Kelola Websitemu disini :)</Text>
-        </View>
-
-        <Form style={darkModeProps ? stylesDarkMode.wrapperFormLoginScreen : stylesLightMode.wrapperFormLoginScreen}>
-          <Item floatingLabel last style={darkModeProps ? stylesDarkMode.styleItemInput : stylesLightMode.styleItemInput}>
-            <Label style={darkModeProps ? stylesDarkMode.labelFormLoginScreen : stylesLightMode.labelFormLoginScreen}>Email</Label>
-            <Input autoCapitalize={'none'} onChangeText={(text) => this.setState({email:text})} keyboardType={'email-address'} style={darkModeProps ? stylesDarkMode.inputLoginScreen : stylesLightMode.inputLoginScreen} />
-          </Item>
+            <Form style={ stylesAsset.wrapperFormLoginScreen}>
+              <Label style={ stylesAsset.labelFormLoginScreen}>E-mail Address</Label>
+              <Item regular style={ stylesAsset.styleItemInput}>
+                <Input placeholder={'Enter E-mail Address'} placeholderTextColor={'#EAEAEA'} autoCapitalize={'none'} onChangeText={(text) => this.setState({email:text})} keyboardType={'email-address'} style={ stylesAsset.inputLoginScreen} />
+              </Item>
+              {
+                errorEmail
+                  ?
+                    <Label style={ stylesAsset.labelError}>Invalid E-mail Address</Label>
+                  :
+                    null
+              }
+              
+              <Label style={[stylesAsset.labelFormLoginScreen, {marginTop:moderateScale(15)}]}>Password</Label>
+              <Item regular style={ stylesAsset.styleItemInput}>
+                <Input placeholder={'Enter Password'} placeholderTextColor={'#EAEAEA'} value={password} secureTextEntry={showPassword} onChangeText={(text) => this.setState({password:text})} style={ stylesAsset.inputLoginScreen} />
+                <Icon type={'Ionicons'} name={icon} style={{color:'#9D9FA0', fontSize:moderateScale(20)}} onPress={() => this._changeIcon()} />
+              </Item>
+              {
+                errorPassword
+                  ?
+                    <Label style={ stylesAsset.labelError}>Invalid Password</Label>
+                  :
+                    null
+              }
+            </Form>
+          </ScrollView>
           
-          <Item floatingLabel last style={darkModeProps ? stylesDarkMode.styleItemInput : stylesLightMode.styleItemInput}>
-            <Label style={darkModeProps ? stylesDarkMode.labelFormLoginScreen : stylesLightMode.labelFormLoginScreen}>Password</Label>
-            <Input value={password} secureTextEntry={this.state.showPassword} onChangeText={(text) => this.setState({password:text})} style={darkModeProps ? stylesDarkMode.inputLoginScreen : stylesLightMode.inputLoginScreen} />
-            <Icon type={'Ionicons'} name={this.state.icon} style={{color:'#F7FFFF'}} onPress={() => this._changeIcon()} />
-          </Item>
           
-          <Button disabled={loadingLogin} onPress={() => this.validationLogin()} style={darkModeProps ? stylesDarkMode.buttonMasukLoginScreen : stylesLightMode.buttonMasukLoginScreen} full primary>
+          <Button disabled={loadingLogin} onPress={() => this.validationLogin()} style={loadingLogin ? stylesAsset.buttonMasukLoginGetAPIScreen : stylesAsset.buttonMasukLoginScreen} full primary>
             {
               loadingLogin
                 ?
-                  <ActivityIndicator size="small" color={darkModeProps ? '#F7FFFF' : '#15BFAE'} />
+                  <ActivityIndicator size="small" color={'#FFFFFF50'} />
                 :
-                  <Text style={darkModeProps ? stylesDarkMode.textButtonMasukLoginScreen : stylesLightMode.textButtonMasukLoginScreen}>Login</Text>
+                  <Text style={stylesAsset.textButtonMasukLoginScreen}>Login</Text>
             }
           </Button>
-        </Form>
+        </LinearGradient>
       </Container>
     )
   }
@@ -166,14 +178,18 @@ class Login extends Component {
 
 const mapStateToProps = (state) => ({
   statusLogin: state.AppReducerPersist.appIsLogin,
-  darkModeProps: state.AppReducerPersist.darkMode,
 })
 export default connect(mapStateToProps)(Login);
  
 const styles = StyleSheet.create({
   logohHeader: {
-    width: 200, 
-    height: 40, 
+    width: 60, 
+    height: 15, 
+  },
+  linearGradient: {
+    flex: 1,
+    paddingLeft: moderateScale(23),
+    paddingRight: moderateScale(23),
   },
 });
 

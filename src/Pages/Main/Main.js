@@ -9,15 +9,16 @@ import {
 import { Container, Header, Content, Footer, FooterTab, Button, Icon, Text, Toast } from 'native-base';
 import {connect} from 'react-redux';
 import axios from 'axios';
+import { verticalScale, moderateScale } from 'react-native-size-matters';
 
 //import base url
 import url from '../../services/api_services';
 
 //import styles 
-import stylesLightMode from '../../Assets/Style/LightMode';
-import stylesDarkMode from '../../Assets/Style/DarkMode';
+import stylesAsset from '../../Assets/Style/StyleAsset';
 
 //import pages
+import List from './Screens/List/List';
 import Dashboard from './Screens/Dashboard/Dashboard';
 
 class MainScreens extends Component {
@@ -27,38 +28,41 @@ class MainScreens extends Component {
     this.state = {
       selectedTab: "",
 
-      pageNow:1,
-      tampilanDataPerpage:50,
     }
   }
 
   componentDidMount(){
-    const {
-      pageNow,
-      tampilanDataPerpage
-    } = this.state;
-
     this.setState({
       selectedTab: "dashboard"
     });
 
-    // axios.get(`${url.API}/dashboard`, {
-    //   headers: { Authorization: `Bearer ${this.props.token}` }
-    // }).then(res => {
-  
-    // }).catch(error => {
-    //   Toast.show({
-    //     text: "Sesi login anda telah berakhir, silahkan login kembali.",
-    //     buttonText: "",
-    //     buttonText: "OK",
-    //     duration: 5000
-    //   });
+    axios.post(`${url.API}/dashboard`, {
+      token:this.props.token      
+    }).then(res => {
+      this.props.dispatch({
+        type: 'GET_DATA_LIST',
+        payload:axios.get(`${url.API}/list`)
+      });
 
-    //   this.props.dispatch({
-    //     type: 'SET_IS_LOGOUT',
-    //   });
-    //   this.props.navigation.navigate('Login')
-    // });
+      this.props.dispatch({
+        type: 'GET_DATA_DASHBOARD',
+        payload:axios.post(`${url.API}/dashboard`, {
+          token:this.props.token
+        })
+      });
+    }).catch(error => {
+      Toast.show({
+        text: "Sesi login anda telah berakhir, silahkan login kembali.",
+        buttonText: "",
+        buttonText: "OK",
+        duration: 5000
+      });
+
+      this.props.dispatch({
+        type: 'SET_IS_LOGOUT',
+      });
+      this.props.navigation.navigate('Login')
+    });
   }
 
   renderSelectTab() {
@@ -66,6 +70,10 @@ class MainScreens extends Component {
 
     switch (selectedTab) {
       case "dashboard":
+        return <List navigation={this.props.navigation} />;
+        break;
+
+      case "profile":
         return <Dashboard navigation={this.props.navigation} />;
         break;
 
@@ -75,51 +83,31 @@ class MainScreens extends Component {
 
   render() {
     const {selectedTab} = this.state;
-    const {darkModeProps} = this.props;
     return (
       <Container>
         {this.renderSelectTab()}
-        <Footer style={darkModeProps ? stylesDarkMode.wrapperFooterNavbar : stylesLightMode.wrapperFooterNavbar}>
-          <FooterTab style={darkModeProps ? stylesDarkMode.wrapperFooterNavbar : stylesLightMode.wrapperFooterNavbar}>
+        <Footer style={stylesAsset.wrapperFooterNavbar}>
+          <FooterTab style={stylesAsset.wrapperFooterNavbar}>
             <Button vertical onPress={() => this.setState({ selectedTab: "dashboard" })}>
-              <Icon
-                name="dashboard"
-                type={"MaterialIcons"}
-                style = {
-                  selectedTab === "dashboard"
-                    ? 
-                      darkModeProps 
-                        ?
-                          stylesDarkMode.iconNavbarActive
-                        :
-                          stylesLightMode.iconNavbarActive
-                    : 
-                      darkModeProps 
-                        ?
-                          stylesDarkMode.iconNonNavbarActive
-                        :
-                          stylesLightMode.iconNonNavbarActive
-                }
-              />
-              <Text
-                style = {
-                  selectedTab === "dashboard"
-                    ? 
-                      darkModeProps
-                        ?
-                          stylesDarkMode.styleFontActiveNavbar
-                        :
-                          stylesLightMode.styleFontActiveNavbar
-                    : 
-                      darkModeProps
-                        ?
-                          stylesDarkMode.styleFontNonActiveNavbar
-                        :
-                          stylesLightMode.styleFontNonActiveNavbar
-                }
-              >
-                Dashboard
-              </Text>
+              {
+                selectedTab === "dashboard"
+                  ?
+                    <Image resizeMode={'contain'} style={styles.iconBar} source={require('../../Assets/Images/icon_bar_active.png')} />
+                  :
+                    <Image resizeMode={'contain'} style={styles.iconBar} source={require('../../Assets/Images/icon_bar.png')} />
+              }
+            </Button>
+          </FooterTab>
+
+          <FooterTab style={stylesAsset.wrapperFooterNavbar}>
+            <Button vertical onPress={() => this.setState({ selectedTab: "profile" })}>
+              {
+                selectedTab === "profile"
+                  ?
+                    <Image resizeMode={'contain'} style={styles.iconBar} source={require('../../Assets/Images/icon_nobi_active.png')} />
+                  :
+                    <Image resizeMode={'contain'} style={styles.iconBar} source={require('../../Assets/Images/icon_nobi.png')} />
+              }
             </Button>
           </FooterTab>
         </Footer>
@@ -129,20 +117,16 @@ class MainScreens extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  darkModeProps: state.AppReducerPersist.darkMode,
-
   //reducer auth
   token: state.AppReducerPersist.token,
-
-  //data id list provinsi, kota, kecamatan
-  id_kota: state.AppReducerPersist.id_kota,
-  id_prov: state.AppReducerPersist.id_prov,
-  id_kecamatan: state.AppReducerPersist.id_kecamatan,
 })
 export default connect(mapStateToProps)(MainScreens);
 
 const styles = StyleSheet.create({
-
+  iconBar:{
+    width:moderateScale(24),
+    height:verticalScale(23)
+  },
 });
 
 

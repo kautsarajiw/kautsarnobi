@@ -12,7 +12,8 @@ import promise from 'redux-promise-middleware';
 import AppReducer from './Reducer/AppReducer';
 
 //reducer dashboard 
-import DashboardReducer from '../Pages/Main/Screens/Dashboard/Reducer/ReducerDashboard';
+import ReducerList from '../Pages/Main/Screens/List/Reducer/ReducerList';
+import ReducerDashboard from '../Pages/Main/Screens/Dashboard/Reducer/ReducerDashboard';
 
 
 
@@ -26,13 +27,14 @@ const RootReducer = combineReducers({
   AppReducerPersist,
 
   //reducer dashboard
-  DashboardReducer,
+  ReducerList,
+  ReducerDashboard
 
 });
 
 const Middleware = applyMiddleware(
   promise,
-  createLogger({ collapsed: true })
+  // createLogger({ collapsed: true })
 );
 
 export const store = createStore(RootReducer, {}, Middleware);

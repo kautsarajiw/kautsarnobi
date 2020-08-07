@@ -5,9 +5,6 @@ const initialState = {
     //token
     token:null,
 
-    //data darkmode
-    darkMode:true,
-
 };
 
 const AppReducer = (state = initialState, action) => {
@@ -34,13 +31,7 @@ const AppReducer = (state = initialState, action) => {
             //token
             token:null,
           };
-
-        case 'SET_DARK_MODE':
-          return {
-            ...state,
-            darkMode: action.meta.valueDarkMode,
-          };
-
+        break;
 
         default:
           return state;
