@@ -40,6 +40,7 @@ $ npx react-native run-android
 | ------ | ------ |
 | Pull to Refresh | You can refresh the page, just pull and hold |
 | Logo Apps | The application already has a logo taken from nobi logo |
+| Loader Content | The application already has a loader content like facebook |
 
 
 License
